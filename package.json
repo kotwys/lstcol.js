@@ -1,0 +1,14 @@
+{
+  "name": "lstcol",
+  "version": "0.1.0",
+  "description": "Code listing column alignment",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "kotwys",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

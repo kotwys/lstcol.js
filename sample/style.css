@@ -1,0 +1,23 @@
+@page {
+  size: A4;
+}
+
+:root {
+  font-family: "CMU Serif", serif;
+  font-size: 12pt;
+}
+
+pre, code {
+  font-family: inherit !important;
+  font-variant-ligatures: none;
+}
+
+pre {
+  border: 1px solid black;
+  padding: .6em;
+  /* background: repeating-linear-gradient( */
+  /*   to right, */
+  /*   lightgray 0, lightgray 1px, */
+  /*   transparent 1px, transparent .6em */
+  /* ); */
+}
