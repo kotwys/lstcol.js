@@ -13,9 +13,8 @@ Can be used with some CSS Typesetting tools working in the browser.
 ⚠️ Your browser needs to support the [`Intl.Segmenter`][intl] API for the script
 to work. Check the linked page for the compatibility information.
 
-Download [the script](./dist/index.js) and place it on your web server or
-reference it by the direct link, then import it as follows (`<script
-type="module">` will be needed):
+Download [the script](./dist/index.js) and place it on your web server, then
+import it as follows (a `<script type="module">` will be needed):
 
 ```javascript
 import { alignListings } from "./dist/index.js";
