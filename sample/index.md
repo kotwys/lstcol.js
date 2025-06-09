@@ -35,7 +35,7 @@ public class Octahedron(double side)
 ```
 
 <script type="module">
-import { alignListings } from "http://localhost:8080/dist/index.js";
+import { alignListings } from "https://raw.githack.com/kotwys/lstcol.js/main/dist/index.js";
 alignListings("pre > code", {
   categoryOverride(grapheme, el) {
     if (el.classList.contains("commonlisp")) {
