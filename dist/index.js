@@ -74,7 +74,7 @@ const outputPx = (px) => px.toFixed(3) + "px";
  * @param el - element to traverse
  * @returns an array of tokens
  */
-function splitTokens(el) {
+function splitTokens(el, options) {
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     const segmenter = new Intl.Segmenter();
     const tokens = [];
@@ -83,7 +83,7 @@ function splitTokens(el) {
         let prevCategory;
         let graphemeBoundaries = [];
         for (const { index, segment } of segmenter.segment(node.textContent)) {
-            const category = classifyGrapheme(segment);
+            const category = options?.categoryOverride(segment, el) || classifyGrapheme(segment);
             const shouldSplit = prevCategory &&
                 (prevCategory === "other" || category !== prevCategory);
             if (shouldSplit) {
@@ -101,10 +101,10 @@ function splitTokens(el) {
     }
     return tokens;
 }
-function alignElement(el, baseWidth) {
+function alignElement(el, options) {
     const style = window.getComputedStyle(el);
-    const cellWidthPx = parseFloat(style.fontSize) * baseWidth;
-    const tokens = splitTokens(el);
+    const cellWidthPx = parseFloat(style.fontSize) * (options?.baseWidth || 0.6);
+    const tokens = splitTokens(el, options);
     /** Space to compensate after the previous token */
     let previous = 0;
     for (let i = 0; i < tokens.length; i++) {
@@ -141,31 +141,39 @@ function alignElement(el, baseWidth) {
         }
     }
 }
-export function alignListings(options) {
+export function alignListings(
+/**
+ * Target element(s) to apply column alignment to. When a string is given, it
+ * should be a CSS selector.
+ */
+target, options) {
     if (!("Intl" in window && "Segmenter" in Intl)) {
         throw new Error("Your browser does not support Intl.Segmenter.");
     }
-    if (!(typeof options.target === "string"
-        || options.target instanceof Element
-        || typeof options.target.length === "number")) {
+    if (!(typeof target === "string"
+        || target instanceof Element
+        || typeof target.length === "number")) {
         throw new Error("target should be an element, an array of elements or a CSS selector.");
     }
-    if (options.baseWidth
-        && typeof options.baseWidth !== "number"
-        || options.baseWidth <= 0) {
-        throw new Error("baseWidth should be a positive number");
+    if (options?.baseWidth
+        && (typeof options.baseWidth !== "number" || options.baseWidth <= 0)) {
+        throw new Error("baseWidth should be a positive number.");
     }
     let elements;
-    if (typeof options.target === "string") {
-        elements = document.querySelectorAll(options.target);
+    if (typeof target === "string") {
+        elements = document.querySelectorAll(target);
     }
-    else if (options.target instanceof Element) {
-        elements = [options.target];
+    else if (target instanceof Element) {
+        elements = [target];
     }
     else {
-        elements = options.target;
+        elements = target;
+    }
+    if (options?.categoryOverride
+        && !(options.categoryOverride instanceof Function)) {
+        throw new Error("categoryOverride should be a function.");
     }
     for (let i = 0; i < elements.length; i++) {
-        alignElement(elements[i], options.baseWidth || 0.6);
+        alignElement(elements[i], options);
     }
 }

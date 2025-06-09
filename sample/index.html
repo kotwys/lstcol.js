@@ -22,8 +22,9 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -34,7 +35,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -83,10 +84,35 @@ class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">OutputInfo</span><span class="op">(</span><span class="dt">int</span> Precision<span class="op">,</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                         <span class="dt">string</span> Language <span class="op">=</span> <span class="st">&quot;fi&quot;</span><span class="op">);</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode el"><code class="sourceCode commonlisp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">require</span> <span class="dt">&#39;cl-lib</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>(<span class="kw">defun</span><span class="fu"> lingvo--find-next-tag </span>(tag-name)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">lambda</span> ()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">let*</span> ((query `(((open_tag name: (ident) @name)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                     (:match ,tag-name @name))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                    @tag)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>           (nodes (treesit-query-capture <span class="dt">&#39;lingvo</span> query</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                                         (point)))))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="co">;; return first</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      (cl-loop for (capture . node) in nodes</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>               <span class="kw">when</span> (<span class="kw">eq</span> capture <span class="dt">&#39;tag</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                 <span class="kw">return</span> node))))</span></code></pre></div>
 <script type="module">
 import { alignListings } from "http://localhost:8080/dist/index.js";
-alignListings({
-  target: "pre > code",
+alignListings("pre > code", {
+  categoryOverride(grapheme, el) {
+    if (el.classList.contains("commonlisp")) {
+      const code = grapheme.charCodeAt(0);
+      switch (code) {
+      case 39: // '
+      case 42: // *
+      case 43: // +
+      case 45: // -
+      case 64: // @
+        return "letter";
+      }
+    }
+  },
 });
 </script>
 </body>
